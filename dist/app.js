@@ -12,10 +12,34 @@ app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // Routes
 app.use("/api", routes_1.default);
-app.use("/", async (req, res) => {
-    res.json({
-        success: true,
-        message: "Welcome to library management server",
-    });
+app.get("/", async (req, res, next) => {
+    try {
+        res.json({
+            success: true,
+            message: "Welcome to library management server",
+        });
+    }
+    catch (error) {
+        console.log(error);
+        next({
+            message: "Something went wrong",
+            success: false,
+            error,
+        });
+    }
+});
+// route not found error
+app.use((req, res, next) => {
+    res.status(404).json({ message: "Route not found" });
+});
+// global error
+app.use((error, req, res, next) => {
+    if (error) {
+        console.log(error, "Global error");
+        res.status(400).json({
+            message: error.message,
+            error,
+        });
+    }
 });
 exports.default = app;

@@ -5,7 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const book_route_1 = __importDefault(require("../modules/books/book.route"));
+const borrow_route_1 = __importDefault(require("../modules/borrow/borrow.route"));
 const routes = (0, express_1.Router)();
 routes.use("/books", book_route_1.default);
-routes.use("/borrow");
+routes.use("/borrow", borrow_route_1.default);
 exports.default = routes;

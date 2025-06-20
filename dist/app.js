@@ -6,6 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const routes_1 = __importDefault(require("./app/routes"));
+const mongoose_1 = require("mongoose");
+const handleValidationError_1 = __importDefault(require("./utils/handleValidationError"));
+const config_1 = require("./config");
 const app = (0, express_1.default)();
 // Middlewares
 app.use((0, cors_1.default)());
@@ -34,12 +37,38 @@ app.use((req, res, next) => {
 });
 // global error
 app.use((error, req, res, next) => {
-    if (error) {
-        console.log(error, "Global error");
-        res.status(400).json({
-            message: error.message,
-            error,
-        });
+    // mongoose validation error
+    if (error instanceof mongoose_1.Error.ValidationError) {
+        const formattedError = (0, handleValidationError_1.default)(error);
+        // console.log(formattedError);
+        res.status(400).json(formattedError);
+        return;
     }
+    // mongodbServerError
+    const cause = error.cause ?? error;
+    if (cause?.code === 11000) {
+        const field = (cause.keyPattern && Object.keys(cause.keyPattern)[0]) ||
+            (cause.keyValue && Object.keys(cause.keyValue)[0]) ||
+            "unknown";
+        const value = (cause.keyValue && cause.keyValue[field]) ||
+            (cause.keyValue ? JSON.stringify(cause.keyValue) : "N/A");
+        // console.log(value, field);
+        res.status(409).json({
+            message: `${field} must be unique`,
+            success: false,
+            error: {
+                name: "DuplicateKeyError",
+                field,
+                value,
+            },
+        });
+        return;
+    }
+    // others error
+    res.status(error.status || 500).json({
+        message: "Internal Server Error",
+        success: false,
+        error: config_1.node_env === "development" ? error : "Something went wrong",
+    });
 });
 exports.default = app;

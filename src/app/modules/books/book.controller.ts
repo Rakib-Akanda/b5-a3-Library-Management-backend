@@ -13,22 +13,30 @@ const ZBookSchema = z.object({
 });
 const ZUpdateBookSchema = ZBookSchema.partial().strict();
 
-const createBook = async (req: Request, res: Response, next: NextFunction) => {
+const createBook: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const zodBody = await ZBookSchema.parseAsync(req.body);
-    console.log("zod body", zodBody);
+    // console.log("zod body", zodBody);
     const book = await Book.create(zodBody);
     res.status(201).json({
       success: true,
       message: "Book created successfully",
       data: book,
     });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 };
 
-const getBooks = async (req: Request, res: Response, next: NextFunction) => {
+const getBooks: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { filter, sortBy, sort, limit } = req.query;
     const sortField = sortBy || "createdAt";

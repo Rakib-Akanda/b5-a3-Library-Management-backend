@@ -7,4 +7,5 @@ const express_1 = require("express");
 const book_route_1 = __importDefault(require("../modules/books/book.route"));
 const routes = (0, express_1.Router)();
 routes.use("/books", book_route_1.default);
+routes.use("/borrow");
 exports.default = routes;

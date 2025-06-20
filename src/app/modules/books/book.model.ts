@@ -30,7 +30,7 @@ const bookSchema = new Schema<IBook>(
       type: String,
       required: true,
       trim: true,
-      unique: true,
+      unique: [true, "isbn already exists"],
     },
     description: {
       type: String,
@@ -39,6 +39,7 @@ const bookSchema = new Schema<IBook>(
     copies: {
       type: Number,
       required: true,
+      min: [0, "Copies must be a positive number"],
     },
     available: {
       type: Boolean,

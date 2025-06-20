@@ -18,7 +18,7 @@ const ZUpdateBookSchema = ZBookSchema.partial().strict();
 const createBook = async (req, res, next) => {
     try {
         const zodBody = await ZBookSchema.parseAsync(req.body);
-        console.log("zod body", zodBody);
+        // console.log("zod body", zodBody);
         const book = await book_model_1.default.create(zodBody);
         res.status(201).json({
             success: true,

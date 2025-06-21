@@ -150,11 +150,11 @@ Returns an array like:
 ---
 
 ### Error Handling
-
-- Validation errors → **400** with details.
-- Duplicate ISBN → **409**.
-- Not found → **404**.
-- Unhandled server errors → **500**.
+- Custom Error ->  **Code** with dynamic statusCode, message and payload. 
+- Validation errors -> **400** with details.
+- Duplicate ISBN -> **409**.
+- Not found -> **404**.
+- Unhandled server errors -> **500**.
 
 ---
 

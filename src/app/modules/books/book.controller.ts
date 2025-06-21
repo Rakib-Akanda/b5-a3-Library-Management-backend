@@ -89,7 +89,15 @@ const updateBook: RequestHandler = async (
 ) => {
   try {
     const id = req.params.bookId;
-    const updatedDoc = await ZUpdateBookSchema.parseAsync(req.body);
+    const updatedData = await ZUpdateBookSchema.parseAsync(req.body);
+    const updatedDoc: any = {};
+    if (updatedData.copies !== undefined) {
+      updatedDoc.$inc = { copies: updatedData.copies };
+    }
+    const { copies, ...otherFields } = updatedData;
+    if (Object.keys(otherFields).length > 0) {
+      updatedDoc.$set = otherFields;
+    }
     const book = await Book.findByIdAndUpdate(id, updatedDoc, {
       new: true,
       runValidators: true,

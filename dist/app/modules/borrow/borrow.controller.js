@@ -39,6 +39,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const zod_1 = require("zod");
 const borrow_model_1 = __importDefault(require("./borrow.model"));
+const customError_1 = require("../../../utils/customError");
+// zod
 const ZObjectIdSchema = zod_1.z
     .string()
     .refine((val) => mongoose_1.default.Types.ObjectId.isValid(val), {
@@ -55,6 +57,7 @@ const ZBorrowSchema = zod_1.z.object({
         message: "Invalid date formate",
     }),
 });
+// controller
 const createBorrow = async (req, res, next) => {
     try {
         const zodBody = await ZBorrowSchema.strict().parseAsync(req.body);
@@ -70,7 +73,52 @@ const createBorrow = async (req, res, next) => {
         next(error);
     }
 };
+const getBorrow = async (req, res, next) => {
+    try {
+        // console.log("hello from get summary");
+        const summary = await borrow_model_1.default.aggregate([
+            {
+                $group: {
+                    _id: "$book",
+                    totalQuantity: { $sum: "$quantity" },
+                },
+            },
+            {
+                $lookup: {
+                    from: "books",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "book",
+                },
+            },
+            {
+                $unwind: "$book",
+            },
+            {
+                $project: {
+                    _id: 0,
+                    book: {
+                        title: "$book.title",
+                        isbn: "$book.isbn",
+                    },
+                    totalQuantity: 1,
+                },
+            },
+        ]);
+        if (!summary.length)
+            throw new customError_1.CustomError(404, "data not found");
+        res.status(200).json({
+            success: true,
+            message: "Borrowed books summary retrieved successfully",
+            data: summary,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+};
 const borrowController = {
     createBorrow,
+    getBorrow,
 };
 exports.default = borrowController;

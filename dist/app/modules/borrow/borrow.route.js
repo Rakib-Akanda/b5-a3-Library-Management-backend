@@ -8,5 +8,6 @@ const borrow_controller_1 = __importDefault(require("./borrow.controller"));
 const borrowRoute = (0, express_1.Router)();
 borrowRoute
     .route("/")
-    .post(borrow_controller_1.default.createBorrow);
+    .post(borrow_controller_1.default.createBorrow)
+    .get(borrow_controller_1.default.getBorrow);
 exports.default = borrowRoute;

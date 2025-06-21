@@ -24,7 +24,7 @@ const createBook: RequestHandler = async (
     const book = await Book.create(zodBody);
     res.status(201).json({
       success: true,
-      message: "Book created successfully",
+      message: "Borrow created successfully",
       data: book,
     });
   } catch (error: any) {

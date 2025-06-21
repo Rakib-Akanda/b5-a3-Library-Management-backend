@@ -22,7 +22,7 @@ const createBook = async (req, res, next) => {
         const book = await book_model_1.default.create(zodBody);
         res.status(201).json({
             success: true,
-            message: "Book created successfully",
+            message: "Borrow created successfully",
             data: book,
         });
     }

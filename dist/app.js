@@ -9,6 +9,7 @@ const routes_1 = __importDefault(require("./app/routes"));
 const mongoose_1 = require("mongoose");
 const handleValidationError_1 = __importDefault(require("./utils/handleValidationError"));
 const config_1 = require("./config");
+const customError_1 = require("./utils/customError");
 const app = (0, express_1.default)();
 // Middlewares
 app.use((0, cors_1.default)());
@@ -37,8 +38,17 @@ app.use((req, res, next) => {
 });
 // global error
 app.use((error, req, res, next) => {
-    // mongoose validation error
+    // custom error
+    if (error instanceof customError_1.CustomError) {
+        res.status(error.statusCode).json({
+            success: false,
+            message: error.message,
+            error: error.payload ?? null,
+        });
+        return;
+    }
     if (error instanceof mongoose_1.Error.ValidationError) {
+        // mongoose validation error
         const formattedError = (0, handleValidationError_1.default)(error);
         // console.log(formattedError);
         res.status(400).json(formattedError);

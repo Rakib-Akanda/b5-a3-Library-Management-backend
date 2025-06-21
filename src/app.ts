@@ -4,6 +4,7 @@ import routes from "./app/routes";
 import { Error as MongooseError } from "mongoose";
 import handleValidationError from "./utils/handleValidationError";
 import { node_env } from "./config";
+import { CustomError } from "./utils/customError";
 
 const app: Application = express();
 
@@ -37,8 +38,17 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 // global error
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
-  // mongoose validation error
+  // custom error
+  if (error instanceof CustomError) {
+    res.status(error.statusCode).json({
+      success: false,
+      message: error.message,
+      error: error.payload ?? null,
+    });
+    return;
+  }
   if (error instanceof MongooseError.ValidationError) {
+    // mongoose validation error
     const formattedError = handleValidationError(error);
     // console.log(formattedError);
     res.status(400).json(formattedError);

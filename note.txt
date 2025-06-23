@@ -1,0 +1,91 @@
+
+/**
+সমাধান ➋ : CLI দিয়ে আলাদা ignore-path ব্যবহার
+bash
+Copy
+Edit
+"lint":     "eslint . --ext .ts --ignore-path .eslintignore",
+"lint:fix": "eslint . --ext .ts --fix --ignore-path .eslintignore"
+কিন্তু Flat Config-এও --ignore-path দিলে চলবে, তবু কনফিগের মধ্যে দেওয়া সবচেয়ে পরিষ্কার।*/
+
+
+
+
+
+.gitattributes ফাইল কী?
+এটি একটা Git configuration ফাইল, যেটা তোমার Git রিপোজিটরির রুট (root) ডিরেক্টরিতে থাকে।
+
+Git কে বলে কিভাবে নির্দিষ্ট ফাইল বা ফোল্ডারকে হ্যান্ডেল করতে হবে, বিশেষ করে লাইন এনডিং (line endings) এবং মার্জিং কনফ্লিক্ট নিয়ে।
+
+.gitattributes দিয়ে তুমি তোমার কোডবেজের জন্য consistent behavior enforce করতে পারো।
+
+* text=auto এর অর্থ কী?
+* মানে সব ফাইলের জন্য এই রুল প্রযোজ্য হবে।
+
+text=auto বলতে হচ্ছে:
+
+Git স্বয়ংক্রিয়ভাবে ফাইলের টাইপ চেক করবে (যেমন: টেক্সট ফাইল, বাইনারি ফাইল)
+
+যদি টেক্সট ফাইল হয়, তাহলে Git লাইনের শেষে লাইন-এন্ডিং কনভার্টেশন চালাবে (cross-platform compatible বানানোর জন্য)
+
+এই মানে কি?
+যখন তুমি কোড কমিট করবে, Git উইন্ডোজের CRLF লাইন এন্ডিং কে LF এ কনভার্ট করবে (রিপোজিটরিতে রাখার সময়)
+
+আর যখন তুমি কোড pull বা clone করবে, Git তোমার অপারেটিং সিস্টেম অনুসারে LF কে CRLF (Windows) বা LF (Linux/macOS) এ কনভার্ট করবে
+
+ফলে সব ডেভেলপার একই রিপোজিটরিতে কাজ করলেও সবাই তাদের অপারেটিং সিস্টেম অনুযায়ী স্বাভাবিক line-ending পাবে, আর কোডবেজে লাইন-এন্ডিং ইস্যু তৈরি হবে না।
+
+কেন এটা দরকার?
+সমস্যা ছাড়া:
+ধরো তোমার দল বেশ কিছু ডেভেলপার Windows, কেউ Mac, কেউ Linux ইউজ করছে।
+
+কেউ CRLF এডিট করে কোড কমিট করে, অন্য কেউ LF ব্যবহার করে।
+
+Git এ line-ending মিক্সড হয়ে যায়, যার ফলে diffs-এ অপ্রয়োজনীয় পরিবর্তন দেখায়।
+
+Prettier, ESLint বা অন্য টুল line-ending নিয়ে error দেয়।
+
+ফাইল মার্জ করতেও সমস্যা হয়।
+
+.gitattributes থাকলে:
+Git নিজেই automatically কনভার্ট করে line ending maintain করে।
+
+কোডবেজ সুস্থ থাকে, error কমে, মার্জ conflict কমে।
+
+.gitattributes এর আর কিছু উদাহরণ:
+gitattributes
+Copy
+Edit
+# সব ফাইলে স্বয়ংক্রিয় line ending কনভার্টেশন
+* text=auto
+
+# বাইনারি ফাইলগুলো কনভার্ট হবে না
+*.png binary
+*.jpg binary
+*.exe binary
+
+# কিছু স্পেসিফিক ফাইল LF হবে সব জায়গায় (যেমন শেল স্ক্রিপ্ট)
+*.sh text eol=lf
+সারসংক্ষেপ:
+বিষয়	কাজ
+.gitattributes	Git কে নির্দেশ দেয় কীভাবে ফাইলগুলো হ্যান্ডেল করতে হবে
+* text=auto	সব টেক্সট ফাইল OS অনুযায়ী line ending কনভার্ট করবে
+সুবিধা	একই কোডবেসে cross-platform consistency আসে, merge conflict কমে
+
+অতিরিক্ত:
+.gitattributes ফাইল commit করে দিলে, নতুন যেকোনো clone বা pull এ এই নিয়মগুলো automatic প্রযোজ্য হবে।
+
+তোমার জন্য সংক্ষিপ্ত টিউটোরিয়াল:
+প্রোজেক্ট root-এ .gitattributes ফাইল বানাও।
+
+ফাইলের মধ্যে লিখো:
+
+gitattributes
+Copy
+Edit
+* text=auto
+git add .gitattributes && git commit -m "Add gitattributes for line ending handling"
+
+এখন থেকে তোমার কোডবেজে line ending issue কম থাকবে।
+
+যদি .gitattributes বা Git সম্পর্কিত অন্য কোনো ব্যাপারে বিস্তারিত জানতে চাও, বলো!

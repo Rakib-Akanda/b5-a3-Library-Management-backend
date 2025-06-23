@@ -23,7 +23,7 @@ const borrowSchema = new Schema<IBorrow, IBorrowModel>(
   {
     versionKey: false,
     timestamps: true,
-  }
+  },
 );
 
 borrowSchema.static(
@@ -51,7 +51,7 @@ borrowSchema.static(
       {
         new: true,
         runValidators: true,
-      }
+      },
     );
     if (!book) throw new CustomError(404, "Not enough copies available");
     if (book.copies === 0) book.available = false;
@@ -61,7 +61,7 @@ borrowSchema.static(
       dueDate,
     });
     return borrow;
-  }
+  },
 );
 
 const Borrow = model<IBorrow, IBorrowModel>("Borrow", borrowSchema);

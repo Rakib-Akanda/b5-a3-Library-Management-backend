@@ -7,6 +7,6 @@ export interface IBorrow {
 }
 
 // static methods
-export interface IBorrowModel extends Model<IBorrow, {}> {
+export interface IBorrowModel extends Model<IBorrow> {
   borrowBook(borrowBody: IBorrow): Promise<any>;
 }

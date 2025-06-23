@@ -1,4 +1,10 @@
-export type TGenre = "FICTION" | "NON-FICTION"| "SCIENCE"| "HISTORY"| "BIOGRAPHY"| "FANTASY";
+export type TGenre =
+  | "FICTION"
+  | "NON-FICTION"
+  | "SCIENCE"
+  | "HISTORY"
+  | "BIOGRAPHY"
+  | "FANTASY";
 
 export interface IBook {
   title: string;

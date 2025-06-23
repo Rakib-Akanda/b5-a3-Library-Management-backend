@@ -50,7 +50,7 @@ const bookSchema = new Schema<IBook>(
   {
     versionKey: false,
     timestamps: true,
-  }
+  },
 );
 
 const Book = model<IBook>("Books", bookSchema);

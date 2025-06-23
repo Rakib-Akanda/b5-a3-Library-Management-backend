@@ -1,6 +1,7 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import Book from "./book.model";
 import { z } from "zod";
+import { Types } from "mongoose";
 
 const ZBookSchema = z.object({
   title: z.string(),
@@ -16,7 +17,7 @@ const ZUpdateBookSchema = ZBookSchema.partial().strict();
 const createBook: RequestHandler = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const zodBody = await ZBookSchema.parseAsync(req.body);
@@ -27,7 +28,7 @@ const createBook: RequestHandler = async (
       message: "Borrow created successfully",
       data: book,
     });
-  } catch (error: any) {
+  } catch (error) {
     next(error);
   }
 };
@@ -35,7 +36,7 @@ const createBook: RequestHandler = async (
 const getBooks: RequestHandler = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { filter, sortBy, sort, limit } = req.query;
@@ -60,7 +61,7 @@ const getBooks: RequestHandler = async (
 const getSingleBook: RequestHandler = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const id = req.params.bookId;
@@ -85,7 +86,7 @@ const getSingleBook: RequestHandler = async (
 const updateBook: RequestHandler = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const id = req.params.bookId;
@@ -114,10 +115,19 @@ const updateBook: RequestHandler = async (
 const deleteBook: RequestHandler = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const id = req.params.bookId;
+    const validateId = Types.ObjectId.isValid(id);
+    if (!validateId) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid book ID",
+        data: null,
+      });
+      return;
+    }
     const book = await Book.findByIdAndDelete(id);
     if (!book) {
       res.status(404).json({

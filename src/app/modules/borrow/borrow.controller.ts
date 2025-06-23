@@ -25,7 +25,7 @@ const ZBorrowSchema = z.object({
 const createBorrow: RequestHandler = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const zodBody = await ZBorrowSchema.strict().parseAsync(req.body);
@@ -45,7 +45,7 @@ const createBorrow: RequestHandler = async (
 const getBorrow: RequestHandler = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     // console.log("hello from get summary");
